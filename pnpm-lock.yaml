@@ -25,6 +25,9 @@ devDependencies:
   '@antfu/eslint-config':
     specifier: ^4.16.1
     version: 4.16.1(@vue/compiler-sfc@3.5.17)(eslint-plugin-format@1.0.1)(eslint@9.29.0)(typescript@5.8.3)
+  '@vue/compiler-sfc':
+    specifier: ^3.5.17
+    version: 3.5.17
   eslint-plugin-format:
     specifier: ^1.0.1
     version: 1.0.1(eslint@9.29.0)
