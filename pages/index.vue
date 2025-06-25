@@ -8,10 +8,8 @@
         <p class="py-6">
           TripSync effortlessly organizes your trips, memories, and routes—so you can focus on the experience, not the planning.
         </p>
-        <button class="btn btn-accent">
-          Get Started with
-          <Icon name="tabler:brand-github" size="24" />
-        </button>
+
+        <AuthButton />
       </div>
     </div>
   </div>
