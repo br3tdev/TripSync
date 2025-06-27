@@ -20,8 +20,12 @@ const route = useRoute();
       :class="{ 'bg-base-200': route.path === props.href, 'justify-start': showLabel, 'justify-center': !showLabel }"
       class="flex gap-1.5 px-4 py-2 hover:bg-base-300 hover:cursor-pointer flex-nowrap"
     >
-      <Icon :name="props.icon" size="24" />
-      <span v-if="showLabel">
+      <Icon
+        :name="props.icon"
+        size="24"
+        class="shrink-0"
+      />
+      <span v-if="showLabel" class="truncate">
         {{ props.label }}
       </span>
     </NuxtLink>
