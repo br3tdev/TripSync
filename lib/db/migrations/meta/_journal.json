@@ -15,6 +15,13 @@
       "when": 1750775417648,
       "tag": "0001_polite_rockslide",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1750997936998,
+      "tag": "0002_thin_tusk",
+      "breakpoints": true
     }
   ]
 }
