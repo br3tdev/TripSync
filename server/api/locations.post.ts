@@ -1,12 +1,11 @@
 import { and, eq } from "drizzle-orm";
-import { customAlphabet } from "nanoid";
 import slugify from "slug";
 import { z } from "zod";
 
+import { findLocationByName, findUniqueSlug, insertLocation } from "~/lib/db/queries/location";
+import { InsertLocation } from "~/lib/db/schema";
 import db from "~/lib/db";
 import { location } from "~/lib/db/schema";
-
-const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxy", 5);
 
 const locationSchema = z.object({
   name: z.string().min(1).max(100),
@@ -23,7 +22,7 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  const result = await readValidatedBody(event, locationSchema.safeParse);
+  const result = await readValidatedBody(event, InsertLocation.safeParse);
 
   if (!result.success) {
     const statusMessage = result
@@ -37,7 +36,6 @@ export default defineEventHandler(async (event) => {
       .issues
       .reduce((errors, issue) => {
         errors[issue.path.join("")] = issue.message;
-
         return errors;
       }, {} as Record<string, string>);
 
@@ -48,13 +46,7 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  const existingLocation = await db.query.location.findFirst({
-    where:
-      and(
-        eq(location.name, result.data.name),
-        eq(location.userId, event.context.user.id),
-      ),
-  });
+  const existingLocation = await findLocationByName(result.data, event.context.user.id);
 
   if (existingLocation) {
     return sendError(event, createError({
@@ -63,30 +55,10 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  let slug = slugify(result.data.name);
-  let slugExists = !!(await db.query.location.findFirst({
-    where: eq(location.slug, slug),
-  }));
-
-  while (slugExists) {
-    const id = nanoid();
-    const idSlug = `${slug}-${id}`;
-    slugExists = !!(await db.query.location.findFirst({
-      where: eq(location.slug, idSlug),
-    }));
-    if (!slugExists) {
-      slug = idSlug;
-    }
-  }
+  const slug = await findUniqueSlug(slugify(result.data.name));
 
   try {
-    const [created] = await db.insert(location).values({
-      ...result.data,
-      slug,
-      userId: event.context.user.id,
-    }).returning();
-
-    return created;
+    return insertLocation(result.data, slug, event.context.user.id);
   }
   catch (error) {
     console.error(error);

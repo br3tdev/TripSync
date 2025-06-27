@@ -3,19 +3,13 @@ import type { FetchError } from "ofetch";
 
 import { toTypedSchema } from "@vee-validate/zod";
 import { AppFormField } from "#components";
-import { z } from "zod";
+
+import { InsertLocation } from "~/lib/db/schema";
 
 const { $csrfFetch } = useNuxtApp();
 
-const locationSchema = z.object({
-  name: z.string().min(1).max(100),
-  description: z.string().max(1000).optional().nullable(),
-  lat: z.number().min(-90).max(90),
-  long: z.number().min(-180).max(180),
-});
-
 const { handleSubmit, errors, meta, setErrors } = useForm({
-  validationSchema: toTypedSchema(locationSchema),
+  validationSchema: toTypedSchema(InsertLocation),
 });
 
 const loading = ref(false);
@@ -40,7 +34,7 @@ const onSubmit = handleSubmit(async (values) => {
       setErrors(error.data?.data);
     }
 
-    submitError.value = error.statusMessage || "Unknown error occurred.";
+    submitError.value = error.data?.statusMessage || error.statusMessage || "Unknown error occurred.";
   }
   loading.value = false;
 });
