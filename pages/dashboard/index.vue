@@ -16,7 +16,7 @@ const { data, status } = await useFetch("/api/locations", {
       <div
         v-for="location in data"
         :key="location.id"
-        class="card card-compact bg-base-200 h-40 w-72"
+        class="card card-compact bg-base-300 h-40 w-72"
       >
         <div class="card-body">
           <h3 class="text-xl" :class="{ 'line-clamp-1': location.description !== null }">
