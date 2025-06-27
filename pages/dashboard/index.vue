@@ -12,7 +12,7 @@ const { data, status } = await useFetch("/api/locations", {
     <div v-if="status === 'pending'">
       <span className="loading loading-spinner loading-xl" />
     </div>
-    <div v-else-if="data" class="flex flex-wrap mt-4 gap-2">
+    <div v-else-if="data && data.length > 0" class="flex flex-wrap mt-4 gap-2">
       <div
         v-for="location in data"
         :key="location.id"
