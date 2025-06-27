@@ -1,27 +1,10 @@
-import { and, eq } from "drizzle-orm";
 import slugify from "slug";
-import { z } from "zod";
 
 import { findLocationByName, findUniqueSlug, insertLocation } from "~/lib/db/queries/location";
 import { InsertLocation } from "~/lib/db/schema";
-import db from "~/lib/db";
-import { location } from "~/lib/db/schema";
+import defineAuthenticatedEventHandler from "~/util/define-authenticated-event-handler";
 
-const locationSchema = z.object({
-  name: z.string().min(1).max(100),
-  description: z.string().max(1000).optional().nullable(),
-  lat: z.number().min(-90).max(90),
-  long: z.number().min(-180).max(180),
-});
-
-export default defineEventHandler(async (event) => {
-  if (!event.context.user) {
-    return sendError(event, createError({
-      statusCode: 401,
-      statusMessage: "Unauthorized",
-    }));
-  }
-
+export default defineAuthenticatedEventHandler(async (event) => {
   const result = await readValidatedBody(event, InsertLocation.safeParse);
 
   if (!result.success) {
