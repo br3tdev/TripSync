@@ -4,3 +4,23 @@
     light --default,
     dark --prefersdark;
 }
+
+/* app.css */
+@layer utilities {
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--p)) hsl(var(--b1));
+  }
+
+  .scrollbar-custom::-webkit-scrollbar {
+    @apply h-2;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    @apply bg-base-200;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-primary rounded-full;
+  }
+}
