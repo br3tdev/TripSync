@@ -15,7 +15,7 @@ onMounted(() => {
     <div v-if="status === 'pending'">
       <span className="loading loading-spinner loading-xl" />
     </div>
-    <div v-else-if="data && data.length > 0" class="flex overflow-x-auto scrollbar-custom my-4 gap-2">
+    <div v-else-if="data && data.length > 0" class="flex overflow-x-auto scrollbar-custom mt-4 gap-2">
       <div
         v-for="location in data"
         :key="location.id"
