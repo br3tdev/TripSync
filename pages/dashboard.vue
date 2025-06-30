@@ -19,7 +19,7 @@ function toggleSidebar() {
 
 <template>
   <div class="flex-1 flex">
-    <div class="bg-base-100 transition-all duration-300 ease-in-out" :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }">
+    <div class="bg-base-100 transition-all duration-300 ease-in-out shrink-0" :class="{ 'w-64': isSidebarOpen, 'w-16': !isSidebarOpen }">
       <div
         class="flex hover:cursor-pointer hover:bg-base-200"
         :class="{ 'justify-end': isSidebarOpen, 'justify-center': !isSidebarOpen }"
@@ -31,7 +31,7 @@ function toggleSidebar() {
           size="32"
         />
       </div>
-      <div class="flex flex-col">
+      <div class="h-full flex flex-col">
         <SidebarButton
           label="Locations"
           icon="tabler:map"
@@ -64,18 +64,22 @@ function toggleSidebar() {
             :href="item.href"
           />
         </div>
-        <div class="divider" />
-        <SidebarButton
-          label="Sign Out"
-          icon="tabler:logout-2"
-          href="/sign-out"
-          :show-label="isSidebarOpen"
-        />
+        <div class="my-auto">
+          <div class="divider" />
+          <SidebarButton
+            label="Sign Out"
+            icon="tabler:logout-2"
+            href="/sign-out"
+            :show-label="isSidebarOpen"
+          />
+        </div>
       </div>
     </div>
-    <div class="flex-1 flex flex-col overflow-hidden">
-      <NuxtPage />
-      <AppMap class="flex-1" />
+    <div class="flex-1 overflow-auto">
+      <div class="flex flex-col size-full">
+        <NuxtPage />
+        <AppMap class="flex-1" />
+      </div>
     </div>
   </div>
 </template>
