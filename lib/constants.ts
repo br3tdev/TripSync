@@ -1,3 +1,3 @@
 import type { LngLatLike } from "maplibre-gl";
 
-export const CENTER_UK = [-98.5795, 39.8283] as LngLatLike;
+export const CENTER_UK = [-74.00685, 40.73330] as LngLatLike;
