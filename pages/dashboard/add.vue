@@ -4,12 +4,19 @@ import type { FetchError } from "ofetch";
 import { toTypedSchema } from "@vee-validate/zod";
 import { AppFormField } from "#components";
 
+import { CENTER_UK } from "~/lib/constants";
 import { InsertLocation } from "~/lib/db/schema";
 
 const { $csrfFetch } = useNuxtApp();
 
-const { handleSubmit, errors, meta, setErrors } = useForm({
+const { handleSubmit, errors, meta, setErrors, setFieldValue, controlledValues } = useForm({
   validationSchema: toTypedSchema(InsertLocation),
+  initialValues: {
+    name: "",
+    description: "",
+    long: (CENTER_UK as [number, number])[0],
+    lat: (CENTER_UK as [number, number])[1],
+  },
 });
 
 const loading = ref(false);
@@ -40,6 +47,30 @@ const onSubmit = handleSubmit(async (values) => {
 });
 
 const router = useRouter();
+const mapStore = useMapStore();
+
+function formatNumber(value?: number) {
+  if (!value)
+    return 0;
+  return value.toFixed(5);
+}
+
+effect(() => {
+  if (mapStore.addedPoint) {
+    setFieldValue("long", mapStore.addedPoint.long);
+    setFieldValue("lat", mapStore.addedPoint.lat);
+  }
+});
+
+onMounted(() => {
+  mapStore.addedPoint = {
+    id: 1,
+    name: "Added Point",
+    description: "",
+    long: (CENTER_UK as [number, number])[0],
+    lat: (CENTER_UK as [number, number])[1],
+  };
+});
 
 onBeforeRouteLeave(() => {
   if (!submitted.value && meta.value.dirty) {
@@ -52,6 +83,7 @@ onBeforeRouteLeave(() => {
       return false;
     }
   }
+  mapStore.addedPoint = null;
   return true;
 });
 </script>
@@ -95,7 +127,22 @@ onBeforeRouteLeave(() => {
         :error="errors.description"
         :disabled="loading"
       />
-      <AppFormField
+      <p class="text-xs">
+        Drag the
+        <span>
+          <Icon name="tabler:map-pin-filled" class="text-warning" />
+        </span>
+        marker to your desired location or
+        <span>
+          <Icon name="tabler:hand-click" class="text-warning" />
+        </span>
+
+        double-click on map.
+      </p>
+      <p>
+        Current location: {{ formatNumber(controlledValues.lat) }}, {{ formatNumber(controlledValues.long) }}
+      </p>
+      <!-- <AppFormField
         name="lat"
         type="number"
         label="Latitude"
@@ -110,7 +157,7 @@ onBeforeRouteLeave(() => {
         description="e.g. 2.3522"
         :error="errors.long"
         :disabled="loading"
-      />
+      /> -->
 
       <div class="flex justify-between mt-2">
         <button
