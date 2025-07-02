@@ -2,10 +2,13 @@
 import type { FetchError } from "ofetch";
 
 import { toTypedSchema } from "@vee-validate/zod";
-import { AppFormField } from "#components";
+import { AppFormField, AppPlaceSearch } from "#components";
+
+import type { NominatimResult } from "~/lib/types";
 
 import { CENTER_UK } from "~/lib/constants";
 import { InsertLocation } from "~/lib/db/schema";
+import getFetchErrorMessage from "~/util/get-fetch-error-message";
 
 const { $csrfFetch } = useNuxtApp();
 
@@ -41,7 +44,7 @@ const onSubmit = handleSubmit(async (values) => {
       setErrors(error.data?.data);
     }
 
-    submitError.value = error.data?.statusMessage || error.statusMessage || "Unknown error occurred.";
+    submitError.value = getFetchErrorMessage(error);
   }
   loading.value = false;
 });
@@ -53,6 +56,18 @@ function formatNumber(value?: number) {
   if (!value)
     return 0;
   return value.toFixed(5);
+}
+
+function searchResultSelected(result: NominatimResult) {
+  setFieldValue("name", result.display_name);
+  mapStore.addedPoint = {
+    id: 1,
+    name: "Added Point",
+    description: "",
+    long: Number(result.lon),
+    lat: Number(result.lat),
+    centerMap: true,
+  };
 }
 
 effect(() => {
@@ -89,7 +104,7 @@ onBeforeRouteLeave(() => {
 </script>
 
 <template>
-  <div class="container max-w-md mx-auto p-4">
+  <div class="container max-w-md mx-auto p-4 overflow-y-auto scrollbar-custom">
     <div class="my-4">
       <h1 class="text-lg">
         Add Location
@@ -127,37 +142,35 @@ onBeforeRouteLeave(() => {
         :error="errors.description"
         :disabled="loading"
       />
-      <p class="text-xs">
-        Drag the
-        <span>
-          <Icon name="tabler:map-pin-filled" class="text-warning" />
-        </span>
-        marker to your desired location or
-        <span>
-          <Icon name="tabler:hand-click" class="text-warning" />
-        </span>
-
-        double-click on map.
+      <p class="text-sm">
+        Current coordinates: {{ formatNumber(controlledValues.lat) }}, {{ formatNumber(controlledValues.long) }}
       </p>
-      <p>
-        Current location: {{ formatNumber(controlledValues.lat) }}, {{ formatNumber(controlledValues.long) }}
+      <p class="text-sm text-gray-600">
+        To set desired coordinates
       </p>
-      <!-- <AppFormField
-        name="lat"
-        type="number"
-        label="Latitude"
-        description="e.g. 48.8566"
-        :error="errors.lat"
-        :disabled="loading"
-      />
-      <AppFormField
-        name="long"
-        type="number"
-        label="Longitude"
-        description="e.g. 2.3522"
-        :error="errors.long"
-        :disabled="loading"
-      /> -->
+      <ul class="list-disc ml-4 text-xs text-gray-600">
+        <li>
+          Drag the
+          <span>
+            <Icon name="tabler:map-pin-filled" class="text-warning" />
+          </span>
+          marker to your desired coordinates
+        </li>
+        <li>
+          Double-click
+          <span>
+            <Icon name="tabler:hand-click" class="text-warning" />
+          </span>
+          on map.
+        </li>
+        <li>
+          Search
+          <span>
+            <Icon name="tabler:search" class="text-warning" />
+          </span>
+          below
+        </li>
+      </ul>
 
       <div class="flex justify-between mt-2">
         <button
@@ -184,5 +197,8 @@ onBeforeRouteLeave(() => {
         </button>
       </div>
     </form>
+
+    <div class="divider" />
+    <AppPlaceSearch @result-selected="searchResultSelected" />
   </div>
 </template>

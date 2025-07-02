@@ -76,6 +76,7 @@ onMounted(() => {
       v-if="mapStore.addedPoint"
       :coordinates="[mapStore.addedPoint.long, mapStore.addedPoint.lat]"
       draggable
+      class="z-50"
       @update:coordinates="updateAddedPoint"
     >
       <template #marker>
