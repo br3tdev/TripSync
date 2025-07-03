@@ -3,10 +3,10 @@ import { createMapPointFromLocation, isPointSelected } from "~/util/map-points";
 
 const mapStore = useMapStore();
 const locationStore = useLocationStore();
-const { locations: data, status } = storeToRefs(locationStore);
+const { locations: data, locationsStatus } = storeToRefs(locationStore);
 
 onMounted(() => {
-  locationStore.refresh();
+  locationStore.refreshLocations();
 });
 </script>
 
@@ -15,7 +15,7 @@ onMounted(() => {
     <h2 class="text-2xl">
       Locations
     </h2>
-    <div v-if="status === 'pending'">
+    <div v-if="locationsStatus === 'pending'">
       <span className="loading loading-spinner loading-xl" />
     </div>
     <div v-else-if="data && data.length > 0" class="flex overflow-x-auto scrollbar-custom mt-4 gap-2">
