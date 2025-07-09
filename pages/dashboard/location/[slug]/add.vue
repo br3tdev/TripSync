@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-// import type { InsertLocationLog } from "~/lib/db/schema";
-
 import { CENTER_UK } from "~/lib/constants";
 
 const route = useRoute();
