@@ -68,3 +68,18 @@ export async function findLocations(userId: number) {
     where: eq(location.userId, userId),
   });
 }
+
+export async function updateLocationBySlug(
+  updates: InsertLocation,
+  slug: string,
+  userId: number,
+) {
+  const [updated] = await db.update(location).set(updates).where(
+    and(
+      eq(location.slug, slug),
+      eq(location.userId, userId),
+    ),
+  ).returning();
+
+  return updated;
+}
