@@ -1,16 +1,17 @@
-import { findLocation } from "~/lib/db/queries/location";
+import { removeLocationBySlug } from "~/lib/db/queries/location";
 import defineAuthenticatedEventHandler from "~/util/define-authenticated-event-handler";
 
 export default defineAuthenticatedEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug") as string;
-  const location = await findLocation(slug, event.context.user.id);
 
-  if (!location) {
+  const deleted = await removeLocationBySlug(slug, event.context.user.id);
+
+  if (!deleted) {
     throw createError({
       statusCode: 404,
       statusMessage: "Location not found.",
     });
   }
 
-  return location;
+  setResponseStatus(event, 204);
 });
