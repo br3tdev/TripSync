@@ -9,7 +9,7 @@ declare module "h3" {
   }
 }
 
-export type latLongCoordinate = {
+export type LatLongCoordinate = {
   lat: number;
   long: number;
 };
@@ -20,7 +20,7 @@ export type MapPoint = {
   description: string | null;
   to?: RouteLocationRaw;
   toLabel?: string;
-} & latLongCoordinate;
+} & LatLongCoordinate;
 
 export type NominatimResult = {
   place_id: number;

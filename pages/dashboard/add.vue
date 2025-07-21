@@ -8,11 +8,9 @@ async function onSubmit(values: InsertLocation) {
     method: "post",
     body: values,
   });
-  console.log(values);
 }
 
 function onSubmitComplete() {
-  console.log("Navigating to >>>> /dashboard");
   navigateTo("/dashboard");
 }
 </script>

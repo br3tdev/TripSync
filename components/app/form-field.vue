@@ -6,7 +6,7 @@ const props = defineProps<{
   name: string;
   type?: InputType;
   error?: string;
-  description: string;
+  description?: string;
   disabled?: boolean;
 }>();
 
