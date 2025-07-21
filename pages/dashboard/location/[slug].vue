@@ -109,7 +109,13 @@ onBeforeRouteUpdate((to) => {
       </p>
       <div v-if="!location.locationLogs.length" class="flex flex-col text-sm italic mt-4 w-max">
         Add a location to get started
-        <button class="btn btn-primary mt-2">
+        <button
+          class="btn btn-primary mt-2"
+          :to="{
+            name: 'dashboard-location-slug-add',
+            params: { slug: route.params.slug },
+          }"
+        >
           Add location log
           <Icon name="tabler:map-pin-plus" size="24" />
         </button>
