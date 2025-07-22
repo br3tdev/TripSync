@@ -2,7 +2,7 @@ import type { SelectLocationWithLocationLog } from "~/lib/db/schema";
 import type { MapPoint } from "~/lib/types";
 
 import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
-import { createMapPointFromLocation } from "~/util/map-points";
+import { createMapPointFromLocation } from "~/utils/map-points";
 
 export const useLocationStore = defineStore("useLocationStore", () => {
   const route = useRoute();

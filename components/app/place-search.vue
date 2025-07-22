@@ -4,7 +4,7 @@ import type { FetchError } from "ofetch";
 import type { NominatimResult } from "~/lib/types";
 
 import { SearchSchema } from "~/lib/zod-schemas";
-import getFetchErrorMessage from "~/util/get-fetch-error-message";
+import getFetchErrorMessage from "~/utils/get-fetch-error-message";
 
 const emit = defineEmits<{
   resultSelected: [result: NominatimResult];
