@@ -24,12 +24,16 @@
   }
 }
 
-.maplibregl-popup-close-button {
-  @apply px-2;
-}
-
 .location-list {
   @apply flex flex-nowrap mt-4 gap-2 overflow-auto;
+}
+
+.page-content-top {
+  @apply px-4 pt-4 min-h-64;
+}
+
+.maplibregl-popup-close-button {
+  @apply px-2;
 }
 
 .page-content-top {

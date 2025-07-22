@@ -3,7 +3,7 @@ import type { MglEvent } from "@indoorequal/vue-maplibre-gl";
 import type { LngLat } from "maplibre-gl";
 
 import { CENTER_UK } from "~/lib/constants";
-import { isPointSelected } from "~/util/map-points";
+import { isPointSelected } from "~/utils/map-points";
 
 const mapStore = useMapStore();
 

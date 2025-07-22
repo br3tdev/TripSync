@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
-import getFetchErrorMessage from "~/util/get-fetch-error-message";
+import getFetchErrorMessage from "~/utils/get-fetch-error-message";
+import { createMapPointFromLocationLog } from "~/utils/map-points";
 
 const route = useRoute();
 
@@ -54,9 +55,17 @@ onBeforeRouteUpdate((to) => {
 </script>
 
 <template>
-  <div class="p-4 min-h-64">
+  <div class="page-content-top">
     <div v-if="loading">
       <div class="loading" />
+
+      <div class="location-list">
+        <div
+          v-for="i in 3"
+          :key="i"
+          class="skeleton h-40 w-72"
+        />
+      </div>
     </div>
 
     <div v-if="errorMessage && !loading">
@@ -109,7 +118,7 @@ onBeforeRouteUpdate((to) => {
       </p>
       <div v-if="!location.locationLogs.length" class="flex flex-col text-sm italic mt-4 w-max">
         Add a location to get started
-        <button
+        <NuxtLink
           class="btn btn-primary mt-2"
           :to="{
             name: 'dashboard-location-slug-add',
@@ -118,7 +127,23 @@ onBeforeRouteUpdate((to) => {
         >
           Add location log
           <Icon name="tabler:map-pin-plus" size="24" />
-        </button>
+        </NuxtLink>
+      </div>
+      <div v-else-if="location.locationLogs.length" class="location-list scrollbar-custom">
+        <LocationCard
+          v-for="log in location.locationLogs"
+          :key="log.id"
+          :map-point="createMapPointFromLocationLog(log)"
+        >
+          <template #top>
+            <p v-if="log.startedAt !== log.endedAt" class="text-sm italic text-gray-500">
+              {{ formatDate(log.startedAt) }} / {{ formatDate(log.endedAt) }}
+            </p>
+            <p v-else class="text-sm italic text-gray-500">
+              {{ formatDate(log.startedAt) }}
+            </p>
+          </template>
+        </LocationCard>
       </div>
     </div>
 

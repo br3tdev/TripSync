@@ -8,7 +8,7 @@ import { AppPlaceSearch } from "#components";
 import type { LatLongCoordinate, NominatimResult } from "~/lib/types";
 
 import { CENTER_UK } from "~/lib/constants";
-import getFetchErrorMessage from "~/util/get-fetch-error-message";
+import getFetchErrorMessage from "~/utils/get-fetch-error-message";
 
 const props = defineProps<{
   initialValues: T;

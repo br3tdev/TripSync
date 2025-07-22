@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CURRENT_LOCATION_PAGES, EDIT_PAGES, LOCATION_PAGES } from "~/lib/constants";
-import { isPointSelected } from "~/util/map-points";
+import { isPointSelected } from "~/utils/map-points";
 
 const route = useRoute();
 const isSidebarOpen = ref(true);
