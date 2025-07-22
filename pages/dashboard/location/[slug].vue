@@ -129,7 +129,7 @@ onBeforeRouteUpdate((to) => {
           <Icon name="tabler:map-pin-plus" size="24" />
         </NuxtLink>
       </div>
-      <div v-else-if="location.locationLogs.length" class="location-list scrollbar-custom">
+      <div v-else-if="route.name === 'dashboard-location-slug' && location.locationLogs.length && !loading" class="location-list scrollbar-custom">
         <LocationCard
           v-for="log in location.locationLogs"
           :key="log.id"
