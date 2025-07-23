@@ -1,4 +1,4 @@
-import type { SelectLocationWithLocationLog } from "~/lib/db/schema";
+import type { SelectLocationLog, SelectLocationWithLocationLog } from "~/lib/db/schema";
 import type { MapPoint } from "~/lib/types";
 
 import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~/lib/constants";
@@ -19,6 +19,19 @@ export const useLocationStore = defineStore("useLocationStore", () => {
     error: currentLocationError,
     refresh: refreshCurrentLocation,
   } = useFetch<SelectLocationWithLocationLog>(locationUrlWithSlug, {
+    lazy: true,
+    immediate: false,
+    watch: false,
+  });
+
+  const locationLogUrlWithSlugAndId = computed(() => `/api/location/${route.params.slug}/${route.params.id}`);
+
+  const {
+    data: currentLocationLog,
+    status: currentLocationLogStatus,
+    error: currentLocationLogError,
+    refresh: refreshCurrentLocationLog,
+  } = useFetch<SelectLocationLog>(locationLogUrlWithSlugAndId, {
     lazy: true,
     immediate: false,
     watch: false,
@@ -71,6 +84,10 @@ export const useLocationStore = defineStore("useLocationStore", () => {
         mapStore.mapPoints = [currentLocation.value];
       }
     }
+    else if (currentLocationLog.value && CURRENT_LOCATION_PAGES) {
+      sidebarStore.sidebarItems = [];
+      mapStore.mapPoints = [currentLocationLog.value];
+    }
     sidebarStore.loading = locationsStatus.value === "pending" || currentLocationStatus.value === "pending";
     if (sidebarStore.loading) {
       mapStore.mapPoints = [];
@@ -85,5 +102,9 @@ export const useLocationStore = defineStore("useLocationStore", () => {
     currentLocationStatus,
     currentLocationError,
     refreshCurrentLocation,
+    currentLocationLog,
+    currentLocationLogError,
+    currentLocationLogStatus,
+    refreshCurrentLocationLog,
   };
 });
