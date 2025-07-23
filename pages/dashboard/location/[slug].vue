@@ -136,11 +136,13 @@ onBeforeRouteUpdate((to) => {
           :map-point="createMapPointFromLocationLog(log)"
         >
           <template #top>
-            <p v-if="log.startedAt !== log.endedAt" class="text-sm italic text-gray-500">
-              {{ formatDate(log.startedAt) }} / {{ formatDate(log.endedAt) }}
-            </p>
-            <p v-else class="text-sm italic text-gray-500">
-              {{ formatDate(log.startedAt) }}
+            <p class="text-sm italic text-gray-500">
+              <span v-if="log.startedAt !== log.endedAt">
+                {{ formatDate(log.startedAt) }} / {{ formatDate(log.endedAt) }}
+              </span>
+              <span v-else>
+                {{ formatDate(log.startedAt) }}
+              </span>
             </p>
           </template>
         </LocationCard>
