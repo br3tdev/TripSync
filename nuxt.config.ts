@@ -1,6 +1,5 @@
-import tailwindcss from "@tailwindcss/vite";
-
 import "./lib/env";
+import tailwindcss from "@tailwindcss/vite";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -29,6 +28,11 @@ export default defineNuxtConfig({
       include: [
         "maplibre-gl",
       ],
+    },
+    server: {
+      watch: {
+        ignored: ["./docker-data/*"],
+      },
     },
   },
   colorMode: {
