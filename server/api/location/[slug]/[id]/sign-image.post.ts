@@ -1,0 +1,56 @@
+import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
+import { z } from "zod";
+
+import env from "~/lib/env";
+import createS3Client from "~/utils/create-s3-client";
+import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
+import sendZodError from "~/utils/send-zod-error";
+
+const MAX_CONTENT_SIZE = 1024 * 1024 * 0.5;
+
+const ImageSchema = z.object({
+  contentLength: z.number().min(1).max(MAX_CONTENT_SIZE),
+  checksum: z.string(),
+});
+
+export default defineAuthenticatedEventHandler(async (event) => {
+  const slug = getRouterParam(event, "slug") as string;
+  const id = getRouterParam(event, "id") as string;
+  const result = await readValidatedBody(event, ImageSchema.safeParse);
+
+  if (!result.success) {
+    return sendZodError(event, result.error);
+  }
+
+  await event.$fetch(`/api/location/${slug}/${id}`);
+
+  const client = createS3Client();
+
+  const fileName = crypto.randomUUID();
+  const key = `${event.context.user.id}/${id}/${fileName}`;
+
+  const { url, fields } = await createPresignedPost(client, {
+    Bucket: env.S3_BUCKET,
+    Key: key,
+    Expires: 120,
+    Fields: {
+      "x-amz-checksum-sha256": result.data.checksum, // Fixed field name
+      "x-amz-meta-user-id": event.context.user.id.toString(), // Moved here
+      "x-amz-meta-location-log-id": id, // Moved here
+    },
+    Conditions: [
+      ["content-length-range", result.data.contentLength, result.data.contentLength],
+      ["eq", "$x-amz-meta-user-id", event.context.user.id.toString()],
+      ["eq", "$x-amz-meta-location-log-id", id],
+    ],
+  });
+
+  // fields["$x-amz-meta-user-id"] = event.context.user.id.toString();
+  // fields["$x-amz-meta-location-log-id"] = id;
+
+  return {
+    url,
+    fields,
+    key,
+  };
+});
