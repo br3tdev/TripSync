@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { FetchError } from "ofetch";
 
+import ImageList from "~/components/image-list.vue";
+
 const route = useRoute();
 const locationStore = useLocationStore();
 
@@ -131,6 +133,24 @@ onBeforeRouteUpdate((to) => {
       <p class="text-sm">
         {{ locationLog.description }}
       </p>
+      <div v-if="!locationLog.images.length" class="flex flex-col gap-2 mt-4">
+        <div class="w-40">
+          <NuxtLink
+            :to="{
+              name: 'dashboard-location-slug-id-images',
+              params: {
+                slug: route.params.slug,
+                id: route.params.id,
+              },
+            }"
+            class="btn btn-primary"
+          >
+            Add images
+            <Icon name="tabler:photo-cog" size="24" />
+          </NuxtLink>
+        </div>
+      </div>
+      <ImageList :images="locationLog.images" />
     </div>
     <div v-else>
       <NuxtPage />
