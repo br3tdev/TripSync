@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { FetchError } from "ofetch";
 
+import type { SelectLocationLogImage } from "~/lib/db/schema";
+
 const { $csrfFetch } = useNuxtApp();
 const route = useRoute();
 
@@ -103,6 +105,42 @@ function uploadImage() {
   });
   previewImage.src = previewUrl.value;
 }
+
+// Delete image dialog
+const isOpen = ref(false);
+const deletingImage = ref<SelectLocationLogImage | null>();
+const deleteError = ref("");
+const isDeleting = ref(false);
+
+function deleteImage(image: SelectLocationLogImage) {
+  deletingImage.value = image;
+  isOpen.value = true;
+}
+
+function onDialogClose() {
+  isOpen.value = false;
+}
+
+async function onConfirmDelete() {
+  if (!deletingImage.value) {
+    return;
+  }
+  isOpen.value = false;
+  try {
+    isDeleting.value = true;
+    deleteError.value = "";
+    await $fetch(`/api/location/${route.params.slug}/${route.params.id}/image/${deletingImage.value?.id}`, {
+      method: "DELETE",
+    });
+    await locationStore.refreshCurrentLocationLog();
+  }
+  catch (e) {
+    const error = e as FetchError;
+    deleteError.value = getFetchErrorMessage(error);
+  }
+  isDeleting.value = false;
+  deletingImage.value = null;
+}
 </script>
 
 <template>
@@ -147,6 +185,35 @@ function uploadImage() {
         </button>
       </div>
     </div>
-    <ImageList class="ml-2" :images="locationLog?.images ?? []" />
+    <ImageList class="ml-2" :images="locationLog?.images ?? []">
+      <template #default="{ image: img }">
+        <button
+          :disabled="deletingImage?.id === img.id && isDeleting"
+          class="btn btn-square btn-error btn-xs absolute top-2 right-2 z-10"
+          @click="deleteImage(img)"
+        >
+          <Icon
+            v-if="deletingImage?.id === img.id && deleteError"
+            name="tabler:alert-circle"
+            size="16"
+          />
+          <div v-else-if="deletingImage?.id === img.id && isDeleting" class="loading loading-xs" />
+          <Icon
+            v-else
+            name="tabler:trash-x-filled"
+            size="16"
+          />
+        </button>
+      </template>
+    </ImageList>
+    <AppDialog
+      title="Are you sure?"
+      description="Deleting this location log cannot be undone. Are you sure you want to do this?"
+      confirm-label="Yes, I am sure"
+      confirm-class="btn-error"
+      :is-open="isOpen"
+      @on-closed="onDialogClose"
+      @on-confirmed="onConfirmDelete"
+    />
   </div>
 </template>
