@@ -7,10 +7,6 @@ import createS3Client from "~/utils/create-s3-client";
 import defineAuthenticatedEventHandler from "~/utils/define-authenticated-event-handler";
 
 export default defineAuthenticatedEventHandler(async (event) => {
-  return sendError(event, createError({
-    statusCode: 422,
-    statusMessage: "Oh no! ☹️",
-  }));
   const imageId = getRouterParam(event, "image-id") as string;
 
   if (!z.coerce.number().safeParse(imageId).success) {
